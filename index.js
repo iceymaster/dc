@@ -1,4 +1,13 @@
 const { Client, GatewayIntentBits } = require('discord.js');
+const http = require('http');
+
+// Egyszerű HTTP szerver, hogy a Render ne lője le a botot (Port scan miatt)
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Bot is running!\n');
+});
+server.listen(process.env.PORT || 3000);
+
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
 
 const WEBHOOK_URL = process.env.GOOGLE_WEB_APP_URL;
@@ -8,7 +17,6 @@ const GUILD_ID = process.env.DISCORD_GUILD_ID;
 client.on('ready', async () => {
   console.log(`Bejelentkezve mint ${client.user.tag}!`);
   
-  // Automatikus szinkronizálás indításkor és óránként
   const syncMembers = async () => {
     try {
       const guild = await client.guilds.fetch(GUILD_ID);
