@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits } = require('discord.js');
 const http = require('http');
 
-// Egyszerű HTTP szerver, hogy a Render ne lője le a botot (Port scan miatt)
+// Egyszerű HTTP szerver, hogy a Render ne lője le a botot
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Bot is running!\n');
@@ -31,16 +31,17 @@ client.on('ready', async () => {
         avatarUrl: m.user.displayAvatarURL()
       }));
 
+      // Itt állítottuk át POLL_SNAPSHOT-ra, hogy a Google Script naplózzon is
       await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           secret: WEBHOOK_SECRET,
-          action: 'SYNC_MEMBERS',
+          action: 'POLL_SNAPSHOT', 
           members: memberList
         })
       });
-      console.log(`[SZINKRON] Sikeresen elküldve ${memberList.length} tag.`);
+      console.log(`[SZINKRON] Sikeresen elküldve ${memberList.length} tag (POLL_SNAPSHOT mód).`);
     } catch (e) {
       console.error('Szinkronizálási hiba:', e);
     }
